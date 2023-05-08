@@ -1,0 +1,65 @@
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+namespace TicketStatusTool
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private async void btnCheckStatus_Click(object sender, EventArgs e)
+        {
+            // Set the base URI of the Cherwell API
+            var baseUri = new Uri("https://example.cherwellondemand.com/CherwellAPI");
+
+            // Create an instance of HttpClient
+            var client = new HttpClient();
+            client.BaseAddress = baseUri;
+
+            // Set the API authentication token
+            var token = "your-api-token";
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Set the API version and content type headers
+            client.DefaultRequestHeaders.Add("Cherwell-API-Version", "2019.3");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Get the ticket ID from the text field
+            var ticketId = txtTicketId.Text;
+
+            // Build the API endpoint URL
+            var endpointUrl = $"api/V1/getbusinessobject/busobid/incidents/fieldentryid/incidentid/{ticketId}";
+
+            // Make a GET request to the API
+            var response = await client.GetAsync(endpointUrl);
+
+            // Check if the response is successful
+            if (response.IsSuccessStatusCode)
+            {
+                // Get the response content as a string
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                // Deserialize the JSON response into a dynamic object
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseContent);
+
+                // Get the ticket status and assigned user name from the response
+                var status = jsonResponse.fields.status.value;
+                var assignedUser = jsonResponse.fields.assignedrecid.displayvalue;
+
+                // Display the ticket status and assigned user name in a label
+                lblTicketStatus.Text = $"Ticket {ticketId} is currently {status} and is assigned to {assignedUser}.";
+            }
+            else
+            {
+                // Display the error status code and message in a label
+                lblTicketStatus.Text = "Error: " + response.StatusCode + " " + response.ReasonPhrase;
+            }
+        }
+    }
+}
