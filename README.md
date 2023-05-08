@@ -29,3 +29,5 @@ To use the tool, follow these steps:
 3. The results will be displayed in the `lblTicketStatus` label below the text field.
 
 Note: If the tool fails to retrieve the ticket status and assigned user name, an error message will be displayed in the `lblTicketStatus` label.
+
+This tool is provided under the Apache License 2.0 and is intended for educational and informational purposes only. By using this tool, you agree to comply with the terms and conditions of the Apache License 2.0. The author and contributors of this tool do not assume any liability or responsibility for any damages or losses arising from the use of this tool.
